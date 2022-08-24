@@ -1,6 +1,6 @@
-package edu.eci.arsw.blacklistvalidator;
+package edu.eci.arst.concprg.blacklistvalidator;
 
-import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
+import edu.eci.arst.concprg.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
 
 public class SearchThread extends Thread {
 
