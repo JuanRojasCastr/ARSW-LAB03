@@ -24,9 +24,20 @@ public class Consumer extends Thread{
     public void run() {
         while (true) {
 
-            if (queue.size() > 0) {
-                int elem=queue.poll();
-                System.out.println("Consumer consumes "+elem);                                
+            try{
+                synchronized (queue){
+                    while (queue.isEmpty())
+                    {
+                        System.out.println("Queue is empty " + Thread.currentThread().getName() + " is waiting , size: " + queue.size());
+                        queue.wait();
+                    }
+                    int elem=queue.poll();
+                    System.out.println("Consumer consumes "+elem);
+                    queue.notifyAll();
+                }
+            }
+            catch (InterruptedException e){
+                e.printStackTrace();
             }
             
         }
