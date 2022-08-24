@@ -10,10 +10,13 @@ public class SearchThread extends Thread {
 
     int to;
 
-    public SearchThread(String ipaddress, int from, int to) {
+    private final Object lock;
+
+    public SearchThread(String ipaddress, int from, int to, Object lock) {
         this.ipaddress = ipaddress;
         this.from = from;
         this.to = to;
+        this.lock = lock;
     }
 
     int ocurrencesCount = 0;
@@ -27,7 +30,6 @@ public class SearchThread extends Thread {
         for (int i = from; i < to; i++){
             checkedListsCount++;
 
-
             if (skds.isInBlackListServer(i, ipaddress)){
 
                 this.ocurrencesCount++;
@@ -37,6 +39,12 @@ public class SearchThread extends Thread {
 
     public int getOcurrencesCount() {
         return ocurrencesCount;
+    }
+
+    public void killThread() throws InterruptedException {
+        synchronized (lock) {
+            lock.wait();
+        }
     }
 
     public static void main() {

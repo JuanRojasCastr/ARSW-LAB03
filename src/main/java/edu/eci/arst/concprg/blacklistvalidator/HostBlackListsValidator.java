@@ -29,7 +29,7 @@ public class HostBlackListsValidator {
      * @param ipaddress suspicious host's IP address.
      * @return  Blacklists numbers where the given host's IP address was found.
      */
-    public List<Integer> checkHost(String ipaddress, int N){
+    public List<Integer> checkHost(String ipaddress, int N) throws InterruptedException {
         
         LinkedList<Integer> blackListOcurrences=new LinkedList<>();
 
@@ -43,7 +43,7 @@ public class HostBlackListsValidator {
 
         int parts = skds.getRegisteredServersCount()/N;
 
-
+        Object lock = new Object();
 
         int checkedInitial = 0;
         int checkedListsCount = parts;
@@ -51,31 +51,30 @@ public class HostBlackListsValidator {
         for (int i=0;i<N;i++) {
             //System.out.println(checkedInitial);
             //System.out.println(checkedListsCount);
-            SearchThread thread = new SearchThread(ipaddress, checkedInitial, checkedListsCount);
-            listThread.add(thread);
-            thread.start();
-            if (i>0){
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-            ocurrencesCount += thread.getOcurrencesCount();
-            blackListOcurrences.add(ocurrencesCount);
+            listThread.add(new SearchThread(ipaddress, checkedInitial, checkedListsCount, lock));
             checkedInitial = checkedListsCount;
             checkedListsCount = (i == N - 2) ?  (checkedListsCount + parts) + skds.getRegisteredServersCount() % N :  checkedListsCount + parts;
 
+        }for (SearchThread thread:listThread) {
+            thread.start();
         }
-
         for (SearchThread thread:listThread) {
-            ocurrencesCount += thread.getOcurrencesCount();
+            try {
+                thread.join();
+                ocurrencesCount += thread.getOcurrencesCount();
+                blackListOcurrences.add(thread.getOcurrencesCount());
+                if (ocurrencesCount>=BLACK_LIST_ALARM_COUNT){
+                    skds.reportAsNotTrustworthy(ipaddress);
+                    break;
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
         }
-        System.out.println(ocurrencesCount);
-        if (ocurrencesCount>=BLACK_LIST_ALARM_COUNT){
-            skds.reportAsNotTrustworthy(ipaddress);
-        }
-        else{
+        if (ocurrencesCount < BLACK_LIST_ALARM_COUNT){
+            for (SearchThread thread:listThread) {
+                thread.killThread();
+            }
             skds.reportAsTrustworthy(ipaddress);
         }
         

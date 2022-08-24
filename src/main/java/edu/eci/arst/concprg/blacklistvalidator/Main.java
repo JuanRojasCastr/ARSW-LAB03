@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Main {
     
-    public static void main(String a[]){
+    public static void main(String a[]) throws InterruptedException {
         HostBlackListsValidator hblv=new HostBlackListsValidator();
         List<Integer> blackListOcurrences=hblv.checkHost("202.24.34.55", 32);
 
@@ -23,7 +23,7 @@ public class Main {
 
 //        System.out.println(thread.getOcurrencesCount());
 
-        System.out.println("The host was found in the following blacklists:"+blackListOcurrences);
+        System.out.println("The host was found in the following blacklists:" + blackListOcurrences);
         
     }
     
