@@ -42,7 +42,7 @@ public class Producer extends Thread {
                         queue.wait();
                     }
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(0);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(Producer.class.getName()).log(Level.SEVERE, null, ex);
                     }

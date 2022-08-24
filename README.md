@@ -14,8 +14,22 @@ Control de hilos con wait/notify. Productor/consumidor.
 A qué se debe este consumo? Se estan creando dos hilos que interatuan sobre una Queue compartida
 cual es la clase responsable? StartProduction crea los hilos y los pone a correr
 2. Haga los ajustes necesarios para que la solución use más eficientemente la CPU, teniendo en cuenta que -por ahora- la producción es lenta y el consumo es rápido. Verifique con JVisualVM que el consumo de CPU se reduzca.
+Aqui sincronizamos los hilos de manera que se pueda compartir la cola de manera adecuada y no se pierdan recursos en tiempo de ejecucion pues al hacerle wait a un hilo este para de consumir recursos
+![](.README_images/a2815b6f.png)
+
 3. Haga que ahora el productor produzca muy rápido, y el consumidor consuma lento. Teniendo en cuenta que el productor conoce un límite de Stock (cuantos elementos debería tener, a lo sumo en la cola), haga que dicho límite se respete. Revise el API de la colección usada como cola para ver cómo garantizar que dicho límite no se supere. Verifique que, al poner un límite pequeño para el 'stock', no haya consumo alto de CPU ni errores.
 
+en el consumer
+![](.README_images/b3f34adb.png)
+en el producer
+![](.README_images/17a05116.png)
+rendimiento
+![](.README_images/4a1d6f6f.png)
+Numero pequeño stock
+![](.README_images/f761f4ff.png)
+![](.README_images/d713542b.png)
+el rendimiento
+![](.README_images/1d0beffe.png)
 
 ##### Parte II. – Antes de terminar la clase.
 
