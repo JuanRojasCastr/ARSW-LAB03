@@ -17,9 +17,14 @@ public class Immortal extends Thread {
 
     private final Random r = new Random(System.currentTimeMillis());
 
+    private final Object lock;
 
-    public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb) {
+    private boolean paused = false;
+
+
+    public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb, Object lock) {
         super(name);
+        this.lock = lock;
         this.updateCallback=ucb;
         this.name = name;
         this.immortalsPopulation = immortalsPopulation;
@@ -43,7 +48,16 @@ public class Immortal extends Thread {
 
             im = immortalsPopulation.get(nextFighterIndex);
 
-            this.fight(im);
+            synchronized (lock) {
+                this.fight(im);
+                while (paused) {
+                    try {
+                        lock.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
 
             try {
                 Thread.sleep(1);
@@ -73,6 +87,14 @@ public class Immortal extends Thread {
 
     public int getHealth() {
         return health;
+    }
+
+    public void pauseInm() {
+        this.paused = true;
+    }
+
+    public void resumeInm() {
+        this.paused = false;
     }
 
     @Override
