@@ -34,7 +34,7 @@ public class Immortal extends Thread {
 
     public void run() {
 
-        while (true) {
+        while (immortalsPopulation.size() > 1) {
             Immortal im;
 
             int myIndex = immortalsPopulation.indexOf(this);
@@ -49,7 +49,6 @@ public class Immortal extends Thread {
             im = immortalsPopulation.get(nextFighterIndex);
 
             synchronized (lock) {
-                this.fight(im);
                 while (paused) {
                     try {
                         lock.wait();
@@ -57,6 +56,7 @@ public class Immortal extends Thread {
                         e.printStackTrace();
                     }
                 }
+                this.fight(im);
             }
 
             try {
@@ -66,13 +66,18 @@ public class Immortal extends Thread {
             }
 
         }
+        System.out.println();
+        updateCallback.processReport(immortalsPopulation.get(0).toString() + "WINS" );
 
     }
 
     public void fight(Immortal i2) {
-
         if (i2.getHealth() > 0) {
             i2.changeHealth(i2.getHealth() - defaultDamageValue);
+            if (i2.getHealth() == 0) {
+                immortalsPopulation.remove(i2);
+                i2.pauseInm();
+            }
             this.health += defaultDamageValue;
             updateCallback.processReport("Fight: " + this + " vs " + i2+"\n");
         } else {
