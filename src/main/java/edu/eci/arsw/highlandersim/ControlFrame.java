@@ -77,9 +77,11 @@ public class ControlFrame extends JFrame {
                 immortals = setupInmortals();
 
                 if (immortals != null) {
-                    for (Immortal im : immortals) {
-                        im.start();
-                    }
+                    try {
+                        for (Immortal im : immortals) {
+                            im.start();
+                        }
+                    } catch (Exception ex) {}
                 }
 
                 btnStart.setEnabled(false);
@@ -96,11 +98,14 @@ public class ControlFrame extends JFrame {
 				 * COMPLETAR
                  */
                 int sum = 0;
+                synchronized (lock) {
+                    for (Immortal im : immortals) {
+                        im.pauseInm();
+                    }
+                }
                 for (Immortal im : immortals) {
                     sum += im.getHealth();
-                    im.pauseInm();
                 }
-
                 statisticsLabel.setText("<html>"+immortals.toString()+"<br>Health sum:"+ sum);
                 
                 

@@ -35,20 +35,21 @@ public class Immortal extends Thread {
     public void run() {
 
         while (immortalsPopulation.size() > 1) {
-            Immortal im;
-
-            int myIndex = immortalsPopulation.indexOf(this);
-
-            int nextFighterIndex = r.nextInt(immortalsPopulation.size());
-
-            //avoid self-fight
-            if (nextFighterIndex == myIndex) {
-                nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
-            }
-
-            im = immortalsPopulation.get(nextFighterIndex);
-
             synchronized (lock) {
+                Immortal im;
+
+                int myIndex = immortalsPopulation.indexOf(this);
+
+                int nextFighterIndex = r.nextInt(immortalsPopulation.size());
+
+                //avoid self-fight
+                if (nextFighterIndex == myIndex) {
+                    nextFighterIndex = ((nextFighterIndex + 1) % immortalsPopulation.size());
+                }
+
+
+                im = immortalsPopulation.get(nextFighterIndex);
+
                 while (paused) {
                     try {
                         lock.wait();
@@ -66,8 +67,8 @@ public class Immortal extends Thread {
             }
 
         }
-        System.out.println();
-        updateCallback.processReport(immortalsPopulation.get(0).toString() + "WINS" );
+        if (immortalsPopulation.indexOf(this) == 0)
+        updateCallback.processReport(this.toString() + " WINS" );
 
     }
 
@@ -75,12 +76,14 @@ public class Immortal extends Thread {
         if (i2.getHealth() > 0) {
             i2.changeHealth(i2.getHealth() - defaultDamageValue);
             if (i2.getHealth() == 0) {
-                immortalsPopulation.remove(i2);
-                i2.pauseInm();
+//                immortalsPopulation.remove(i2);
+//                i2.pauseInm();
             }
             this.health += defaultDamageValue;
             updateCallback.processReport("Fight: " + this + " vs " + i2+"\n");
         } else {
+            immortalsPopulation.remove(i2);
+            i2.pauseInm();
             updateCallback.processReport(this + " says:" + i2 + " is already dead!\n");
         }
 
