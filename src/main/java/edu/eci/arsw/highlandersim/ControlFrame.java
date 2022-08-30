@@ -121,10 +121,10 @@ public class ControlFrame extends JFrame {
                 /**
                  * IMPLEMENTAR
                  */
-                for (Immortal im : immortals) {
-                    im.resumeInm();
-                }
                 synchronized (lock) {
+                    for (Immortal im : immortals) {
+                        im.resumeInm();
+                    }
                     lock.notifyAll();
                 }
                 statisticsLabel.setText("<html>"+"<br>");
@@ -143,6 +143,20 @@ public class ControlFrame extends JFrame {
 
         JButton btnStop = new JButton("STOP");
         btnStop.setForeground(Color.RED);
+        btnStop.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                /**
+                 * IMPLEMENTAR
+                 */
+                synchronized (lock) {
+                    for (Immortal im : immortals) {
+                        im.setPlay(false);
+                    }
+                    lock.notifyAll();
+                }
+                statisticsLabel.setText("<html>"+"<br>");
+            }
+        });
         toolBar.add(btnStop);
 
         scrollPane = new JScrollPane();

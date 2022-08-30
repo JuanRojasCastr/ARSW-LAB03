@@ -1,0 +1,2 @@
+varios hilos generan el problema de los deadloack mas fuerte y tambien producen que al querer leer de la lista existan
+incongruencias pues puede que el hilo que se vaya a leer ya haya sido eliminado

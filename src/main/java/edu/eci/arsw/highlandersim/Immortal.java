@@ -20,6 +20,7 @@ public class Immortal extends Thread {
     private final Object lock;
 
     private boolean paused = false;
+    private boolean play = true;
 
 
     public Immortal(String name, List<Immortal> immortalsPopulation, int health, int defaultDamageValue, ImmortalUpdateReportCallback ucb, Object lock) {
@@ -34,7 +35,7 @@ public class Immortal extends Thread {
 
     public void run() {
 
-        while (immortalsPopulation.size() > 1) {
+        while (immortalsPopulation.size() > 1 && play) {
             synchronized (lock) {
                 Immortal im;
 
@@ -103,6 +104,14 @@ public class Immortal extends Thread {
 
     public void resumeInm() {
         this.paused = false;
+    }
+
+    public boolean isPlay() {
+        return play;
+    }
+
+    public void setPlay(boolean play) {
+        this.play = play;
     }
 
     @Override
